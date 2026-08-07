@@ -1,39 +1,10 @@
-**Welcome to your Base44 project** 
+PeterStreams-V2
 
-**About**
+*ABOUT*
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+I was wanted to watch Pop Team Epic on the school Chromebooks so I vibe coded this. It uses the VidSRC API to host movies and TV shows. My intent was to create a clean, sleek website with little to no ads or pop ups on here. 
 
-This project contains everything you need to run your app locally.
+WARNING: THIS WAS LAZILY VIBECODED USING BASE44, CODE IS VERY MESSY, I AM CURRENTLY LEARNING JAVASCRIPT TO CLEAN THIS UP
 
-**Edit the code in your local development environment**
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
-
-**Prerequisites:** 
-
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
-
-```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
-
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
-```
-
-Run the app: `npm run dev`
-
-**Publish your changes**
-
-Open [Base44.com](http://Base44.com) and click on Publish.
-
-**Docs & Support**
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+<img width="399" height="498" alt="that-brother-is-going-to-be-delivering-my-doordash-in-the-future" src="https://github.com/user-attachments/assets/a04d1315-0cb2-48db-9b86-b4ff0a71d3ab" />
