@@ -7,6 +7,25 @@ import MoreLikeThis from "@/components/MoreLikeThis";
 import RatingBadge from "@/components/RatingBadge";
 import { useImageColors } from "@/hooks/useImageColors";
 
+// Trusted hosts for embeds — update this list if you add/remove providers.
+const TRUSTED_HOSTS = [
+  "media.base44.com",
+  "cdn.base44.com",
+  "vidsrc.to",
+  "player.vimeo.com",
+  "youtube.com",
+  "www.youtube.com",
+  "player.twitch.tv",
+];
+
+function getHostname(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch (e) {
+    return null;
+  }
+}
+
 export default function MovieDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -45,7 +64,7 @@ export default function MovieDetailPage() {
   const trailer = details.videos?.results?.find((v) => v.type === "Trailer" && v.site === "YouTube");
   const usRating = details.release_dates?.results?.find((r) => r.iso_3166_1 === "US")?.release_dates?.[0]?.certification;
   const bgStyle = colors?.vibrant
-    ? { background: `linear-gradient(180deg, rgba(${colors.vibrant.r},${colors.vibrant.g},${colors.vibrant.b},0.35) 0%, rgba(${colors.vibrant.r},${colors.vibrant.g},${colors.vibrant.b},0.08) 40%, #000 70%)` }
+    ? { background: `linear-gradient(180deg, rgba(${colors.vibrant.r},${colors.vibrant.g},${colors.vibrant.b},0.35) 0%, rgba(${colors.vibrant.r},${colors.vibrant.g},${colors.vibrant.b},0.08) 40%, rgba(0,0,0,0) 100%)` }
     : {};
 
   const handlePlay = () => {
@@ -54,6 +73,9 @@ export default function MovieDetailPage() {
   };
 
   if (playing) {
+    const hostname = getHostname(embedSrc);
+    const allowed = hostname ? TRUSTED_HOSTS.includes(hostname) : false;
+
     return (
       <div className="fixed inset-0 z-[60] bg-black flex flex-col">
         <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
@@ -63,8 +85,28 @@ export default function MovieDetailPage() {
           </button>
           <span className="text-white font-bold truncate ml-4 uppercase tracking-wide">{title}</span>
         </div>
-        <div className="flex-1">
-          <iframe src={embedSrc} className="w-full h-full border-0" allowFullScreen allow="autoplay; fullscreen" title={title} />
+        <div className="flex-1 relative bg-black overflow-hidden">
+          {!allowed ? (
+            <div className="w-full h-full flex items-center justify-center p-6 text-center">
+              <div className="max-w-lg text-white">
+                <h2 className="text-xl font-bold mb-2">Blocked untrusted player</h2>
+                <p className="mb-4 text-neutral-300">This player is hosted on an untrusted domain ({hostname}) and has been blocked to prevent pop-ups or redirects.</p>
+                <p className="text-neutral-400 text-sm">If you trust this source, add it to TRUSTED_HOSTS in src/pages/MovieDetailPage.jsx and redeploy.</p>
+                <div className="mt-6">
+                  <button onClick={() => setPlaying(false)} className="px-5 py-2 bg-white text-black font-bold rounded">Close</button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <iframe
+              src={embedSrc}
+              title={title}
+              className="w-full h-full border-0"
+              sandbox={allowed ? "allow-scripts allow-same-origin" : ""}
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              referrerPolicy="no-referrer"
+            />
+          )}
         </div>
       </div>
     );
@@ -185,7 +227,15 @@ export default function MovieDetailPage() {
                   </button>
                   {showTrailer && (
                     <div className="mt-4 aspect-video overflow-hidden bg-black">
-                      <iframe src={`https://www.youtube.com/embed/${trailer.key}`} className="w-full h-full" allowFullScreen title="Trailer" />
+                      {/* sandboxed youtube iframe */}
+                      <iframe
+                        src={`https://www.youtube.com/embed/${trailer.key}`}
+                        className="w-full h-full"
+                        title="Trailer"
+                        sandbox={TRUSTED_HOSTS.includes("youtube.com") ? "allow-scripts allow-same-origin" : ""}
+                        allow="autoplay; picture-in-picture; encrypted-media"
+                        referrerPolicy="no-referrer"
+                      />
                     </div>
                   )}
                 </div>
